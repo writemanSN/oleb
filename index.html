@@ -871,8 +871,8 @@ body.modal-open .content{filter:blur(2px) brightness(.7);pointer-events:none}
           <option value="u10">Malamine Alassane GOUDIABY (Business Coach)</option>
         </select>
       </div>
-      <div style="display:none">
-        <label>Mot de passe</label>
+      <div class="lfield" style="margin-bottom:16px">
+        <label style="font-size:12px;font-weight:600;color:var(--t2);display:block;margin-bottom:5px">Mot de passe</label>
         <input type="password" id="loginPwd" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')doLogin()"
           style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);box-sizing:border-box">
       </div>
@@ -2292,13 +2292,24 @@ function syncSplashSelect(uid){
   autoFillPwd(uid);
 }
 
+// Mots de passe intégrés directement pour connexion sans saisie
+const _PWDS={
+  u1:'Ndiogou@Belo754',
+  u2:'Tida@Belo213',
+  u3:'Ndeye@Belo891',
+  u4:'Almamy@Belo347',
+  u5:'Bilguissa@Belo628',
+  u6:'Mouhamed@Belo156',
+  u7:'Maimouna@Belo489',
+  u8:'Sadion@Belo732',
+  u9:'Aina@Belo265',
+  u10:'Malamine@Belo918'
+};
+
 function autoFillPwd(uid){
-  const u=DB.data.users.find(x=>x.id===uid);
+  // Champ visible - ne pas pré-remplir, l'utilisateur doit saisir son mot de passe
   const el=document.getElementById('loginPwd');
-  if(!el) return;
-  el.value=u&&u.password?u.password:'';
-  el.type='password';
-  el.style.background='';el.style.borderColor='';el.style.color='';el.style.fontWeight='';
+  if(el){ el.value=''; el.focus(); }
 }
 
 function doLogin(){
@@ -2306,7 +2317,10 @@ function doLogin(){
   const pwd = document.getElementById('loginPwd')?.value||'';
   const err = document.getElementById('loginErr');
   const u = DB.data.users.find(x=>x.id===uid);
-  if(!u||u.password!==pwd){ err.style.display='block'; return; }
+  const validPwd=_PWDS[uid]||u?.password||'';
+  if(!uid){err.textContent='Veuillez sélectionner un utilisateur.';err.style.display='block';return;}
+  if(!pwd){err.textContent='Veuillez saisir votre mot de passe.';err.style.display='block';return;}
+  if(!u||pwd!==validPwd){ err.textContent='Identifiant ou mot de passe incorrect.';err.style.display='block'; return; }
   if(u.blocked){ err.textContent='Votre compte a été suspendu. Contactez l\'administrateur.'; err.style.display='block'; return; }
   // Block switching to other users in personal mode
   if(window._personalMode&&u.id!==window._personalMode.uid){ err.textContent='Accès non autorisé.'; err.style.display='block'; return; }
