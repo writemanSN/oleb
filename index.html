@@ -2,7 +2,13 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Nucleus BELO">
+<meta name="theme-color" content="#1B5E3B">
+<meta name="application-name" content="Nucleus BELO">
 <title>Nucleus – Cabinet BELO</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
@@ -804,6 +810,79 @@ body.modal-open .content{filter:blur(2px) brightness(.7);pointer-events:none}
   .benef-table td,.benef-table th{padding:6px 8px;font-size:11px}
 }
 
+
+/* ── iOS safe area (notch/home bar) ── */
+body{padding-bottom:env(safe-area-inset-bottom);padding-top:env(safe-area-inset-top)}
+.topbar{padding-top:max(10px,env(safe-area-inset-top))}
+#splashScreen{padding-bottom:env(safe-area-inset-bottom)}
+
+/* ── Prevent iOS tap highlight & callout ── */
+*{-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
+input,textarea,select{-webkit-tap-highlight-color:transparent}
+/* Allow text selection in inputs */
+input,textarea{-webkit-user-select:text;user-select:text}
+
+/* ── Smooth scroll everywhere ── */
+*{-webkit-overflow-scrolling:touch}
+
+/* ── Prevent zoom on input focus (iOS) ── */
+input,select,textarea{font-size:max(16px,1em)!important}
+
+/* ── Button active state for tactile feedback ── */
+.btn:active,.nitem:active,.rp-nav-tab:active{opacity:.75;transform:scale(.97)}
+
+/* ── Fix 100vh on mobile browsers ── */
+#app{height:100dvh}
+#splashScreen{min-height:100dvh}
+.sidebar,.sb{height:100dvh}
+
+/* ── Touch-friendly minimum tap target ── */
+.btn{min-height:38px}
+.nitem{min-height:36px}
+select{min-height:42px}
+
+/* ── Prevent pull-to-refresh on Android Chrome ── */
+body{overscroll-behavior-y:none}
+.content,.sb{overscroll-behavior:contain}
+
+@media(max-width:860px){
+  /* ── Hamburger positioning avec safe area ── */
+  #mobileMenuBtn{top:max(10px,env(safe-area-inset-top));left:max(10px,env(safe-area-inset-left))}
+
+  /* ── Splash pleine hauteur mobile ── */
+  .splash-right{padding-bottom:max(20px,env(safe-area-inset-bottom))}
+
+  /* ── Formulaire login lisible ── */
+  #loginPwd,#loginUser{font-size:16px!important;padding:12px 14px}
+
+  /* ── Bouton connexion plus grand ── */
+  button[onclick="doLogin()"]{padding:14px;font-size:15px!important}
+
+  /* ── Tableaux: masquer colonnes secondaires sur très petit écran ── */
+  .benef-table .col-hide-sm{display:none}
+
+  /* ── Content ne dépasse pas l'écran ── */
+  .content{max-width:100vw;overflow-x:hidden}
+
+  /* ── Cards plus aérées ── */
+  .card{border-radius:10px}
+
+  /* ── KPI 2 colonnes sur téléphone ── */
+  #dashKpis,#budgetKpiRow{
+    grid-template-columns:repeat(2,1fr)!important;
+    gap:8px!important
+  }
+
+  /* ── Sidebar drawer plus large ── */
+  .sb{width:260px;left:-260px}
+
+  /* ── Rapport : boutons en colonne ── */
+  .rp-action-bar{flex-direction:column;gap:8px}
+
+  /* ── Archive stats: 2x2 ── */
+  .arch-stats-band{grid-template-columns:repeat(2,1fr)!important}
+}
+
 </style>
 </head>
 <body>
@@ -871,10 +950,10 @@ body.modal-open .content{filter:blur(2px) brightness(.7);pointer-events:none}
           <option value="u10">Malamine Alassane GOUDIABY (Business Coach)</option>
         </select>
       </div>
-      <div class="lfield" style="margin-bottom:16px">
-        <label style="font-size:12px;font-weight:600;color:var(--t2);display:block;margin-bottom:5px">Mot de passe</label>
-        <input type="password" id="loginPwd" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')doLogin()"
-          style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);box-sizing:border-box">
+      <div class="lfield" id="pwdFieldWrap" style="margin-bottom:16px;display:block!important">
+        <label style="font-size:12px;font-weight:600;color:var(--t2);display:block!important;margin-bottom:5px">Mot de passe</label>
+        <input type="password" id="loginPwd" placeholder="Entrez votre mot de passe" onkeydown="if(event.key==='Enter')doLogin()"
+          style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);box-sizing:border-box;display:block!important">
       </div>
       <div id="loginErr" style="display:none;background:#fdecea;border:1px solid #f5c0bb;border-radius:7px;padding:8px 12px;font-size:12px;color:var(--red);margin-bottom:12px">Identifiant ou mot de passe incorrect.</div>
       <button onclick="doLogin()" style="width:100%;padding:12px;background:var(--g);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;transition:background .15s" onmouseover="this.style.background='var(--g1)'" onmouseout="this.style.background='var(--g)'">
@@ -2281,7 +2360,7 @@ function _doLoginUser(u){
   initFilters(); applyRoleUI(); syncSuiviMoisOpts(); syncImfMoisOpts();
   // Restore last visited page if available
   let lastPage='dash';
-  try{ const s=localStorage.getItem('nucleus_page'); if(s&&document.getElementById('pg-'+s)) lastPage=s; }catch(e){}
+  try{ const s=sessionStorage.getItem('nucleus_page'); if(s&&document.getElementById('pg-'+s)) lastPage=s; }catch(e){}
   goPage(lastPage);
 }
 
@@ -2307,9 +2386,15 @@ const _PWDS={
 };
 
 function autoFillPwd(uid){
-  // Champ visible - ne pas pré-remplir, l'utilisateur doit saisir son mot de passe
+  const wrap=document.getElementById('pwdFieldWrap');
   const el=document.getElementById('loginPwd');
-  if(el){ el.value=''; el.focus(); }
+  if(wrap) wrap.style.display='block';
+  if(el){
+    el.value='';
+    el.style.display='block';
+    if(uid) setTimeout(()=>el.focus(),80);
+  }
+  document.getElementById('loginErr')?.setAttribute('style','display:none');
 }
 
 function doLogin(){
@@ -2345,30 +2430,26 @@ function doLogin(){
   goPage('dash');
 }
 function doLogout(){
-  // If personal mode (opened via link), auto re-login same user — no access to others
-  if(window._personalMode){
-    const d=DB.data;
-    const u=d.users.find(x=>x.id===window._personalMode.uid);
-    if(u&&!u.blocked){
-      CU=null;
-      Object.keys(rapCharts||{}).forEach(k=>{try{rapCharts[k].destroy();}catch(e){}});
-      rapCharts={};
-      document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
-      document.getElementById('pg-dash').classList.add('on');
-      setTimeout(()=>_doLoginUser(u),50);
-      return;
-    }
-  }
   CU=null;
+  // Détruire les graphiques
   Object.keys(rapCharts||{}).forEach(k=>{try{rapCharts[k].destroy();}catch(e){}});
   rapCharts={};
+  // Cacher l'app
+  document.getElementById('app').classList.remove('on');
+  document.getElementById('loginScreen').style.display='none';
+  // Réinitialiser toutes les pages
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
   document.getElementById('pg-dash').classList.add('on');
-  document.getElementById('app').classList.remove('on');
-  document.getElementById('loginScreen').style.display='flex';
-  document.getElementById('loginUser').value='';
-  const pwdField=document.getElementById('loginPwd');if(pwdField)pwdField.value='';
+  // Réinitialiser le formulaire de connexion
+  const userSel=document.getElementById('loginUser'); if(userSel) userSel.value='';
+  const pwdField=document.getElementById('loginPwd');
+  if(pwdField){ pwdField.value=''; }
   document.getElementById('loginErr').style.display='none';
+  // Effacer la page mémorisée
+  try{sessionStorage.removeItem('nucleus_page');}catch(e){}
+  // Retourner à l'écran principal (splash)
+  document.getElementById('splashScreen').style.display='flex';
+  setTimeout(()=>{ const p=document.getElementById('loginPwd'); if(p) p.focus(); },200);
 }
 
 // ══════════════════════════════════════════════════════
@@ -2385,7 +2466,7 @@ function goPage(id){if(window.innerWidth<=860)closeMobileMenu();
   document.getElementById('pg-'+id).classList.add('on');
   document.getElementById('nav-'+id)?.classList.add('on');
   document.getElementById('pageTitle').textContent=pageTitles[id]||'';
-  try{localStorage.setItem('nucleus_page',id);}catch(e){}
+  try{sessionStorage.setItem('nucleus_page',id);}catch(e){}
   // render page
   if(id==='dash') renderDash();
   else if(id==='benef') renderBenefTable();
@@ -6787,6 +6868,40 @@ function closeMobileMenu(){
     });
   });
 })();
+
+
+// ── Gestion orientation mobile ──────────────────────────────────────
+window.addEventListener('orientationchange', function(){
+  setTimeout(function(){
+    // Fermer menu en mode paysage
+    if(window.innerWidth > 860) closeMobileMenu();
+    // Forcer recalcul hauteur
+    document.documentElement.style.setProperty('--dvh', window.innerHeight+'px');
+  }, 150);
+});
+
+window.addEventListener('resize', function(){
+  if(window.innerWidth > 860) closeMobileMenu();
+  document.documentElement.style.setProperty('--dvh', window.innerHeight+'px');
+});
+
+// Initialiser --dvh
+document.documentElement.style.setProperty('--dvh', window.innerHeight+'px');
+
+// ── Désactiver le zoom double-tap (iOS) ────────────────────────────
+var lastTouchEnd=0;
+document.addEventListener('touchend',function(e){
+  var now=Date.now();
+  if(now-lastTouchEnd<=300){e.preventDefault();}
+  lastTouchEnd=now;
+},{passive:false});
+
+// ── Fermer le clavier virtuel sur blur des inputs ─────────────────
+document.addEventListener('focusout',function(e){
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'){
+    window.scrollTo(0,window.scrollY);
+  }
+});
 
 checkAutoLogin();
 
