@@ -10,6 +10,8 @@
 <meta name="theme-color" content="#1B5E3B">
 <meta name="application-name" content="Nucleus BELO">
 <title>Nucleus – Cabinet BELO</title>
+<meta name="description" content="Application de suivi des Business Coachs – Cabinet BELO, PAFEJ Kolda">
+<meta name="robots" content="noindex, nofollow">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js"></script>
@@ -974,7 +976,7 @@ body{overscroll-behavior-y:none}
       <h1>Nucleus</h1>
       <p>Cabinet BELO · Suivi des Coachs</p>
     </div>
-    <div class="lerr" id="loginErr">Identifiant ou mot de passe incorrect.</div>
+    <div class="lerr" id="loginErrSplash" style="display:none">Identifiant ou mot de passe incorrect.</div>
     <div class="lfield">
       <label>Sélectionner le profil</label>
       <select id="loginUser2" onchange="syncSplashSelect(this.value)">
@@ -1554,6 +1556,9 @@ body{overscroll-behavior-y:none}
           <div><div style="font-size:15px;font-weight:600;font-family:'Outfit',sans-serif;color:var(--t1)">Synchronisation des données</div>
           <div style="font-size:12px;color:var(--t2);margin-top:2px">Export coach · Import administrateur</div></div>
         </div>
+        <div id="storageInfo" style="background:var(--blue2);border:1.5px solid var(--blue);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--blue);margin-bottom:16px;line-height:1.6">
+          💾 Chargement des informations de stockage…
+        </div>
         <div id="syncCoachView"></div>
         <div id="syncAdminView" style="display:none"></div>
       </div>
@@ -1848,16 +1853,16 @@ body{overscroll-behavior-y:none}
 // ══════════════════════════════════════════════════════
 const DEMO = {
   users:[
-    {id:'u1', prenom:'Ndiogou',           nom:'CISSÉ',    role:'admin',  initials:'NC', color:'g',password:'Ndiogou@Belo754'},
-    {id:'u2', prenom:'Tida',              nom:'KANE',     role:'coach',      initials:'TK', color:'p',password:'Tida@Belo213'},
-    {id:'u3', prenom:'Ndéye Coumba',      nom:'FALL',     role:'coach',      initials:'NF', color:'b',password:'Ndeye@Belo891'},
-    {id:'u4', prenom:'Almamy',            nom:'SONKO',    role:'coach',    initials:'AS', color:'g',password:'Almamy@Belo347'},
-    {id:'u5', prenom:'Bilguissa',         nom:'DIALLO',   role:'coach',    initials:'BD', color:'o',password:'Bilguissa@Belo628'},
-    {id:'u6', prenom:'Mouhamed',          nom:'MBALLO',   role:'coach',  initials:'MM', color:'p',password:'Mouhamed@Belo156'},
-    {id:'u7', prenom:'Maimouna',          nom:'SANÉ',     role:'coach',      initials:'MS', color:'b',password:'Maimouna@Belo489'},
-    {id:'u8', prenom:'Sadio',            nom:'SOUANÉ',   role:'coach',  initials:'SS', color:'o',password:'Sadion@Belo732'},
-    {id:'u9', prenom:'Aina Angélique A.', nom:'DIATTA',   role:'coach',    initials:'AD', color:'g',password:'Aina@Belo265'},
-    {id:'u10',prenom:'Malamine Alassane', nom:'GOUDIABY', role:'coach', initials:'MG', color:'b',password:'Malamine@Belo918'},
+    {id:'u1', prenom:'Ndiogou',           nom:'CISSÉ',    role:'admin',  initials:'NC', color:'g',passwordHash:'60e1e8ca0013510bf7ab5f8156b5052d6a8ece838c74d30a16604acfc11866ce'},
+    {id:'u2', prenom:'Tida',              nom:'KANE',     role:'coach',      initials:'TK', color:'p',passwordHash:'31e2e82b309358bd79fe798664099321c1e9f29a22c3f2028934a075128ed7cf'},
+    {id:'u3', prenom:'Ndéye Coumba',      nom:'FALL',     role:'coach',      initials:'NF', color:'b',passwordHash:'968a69abf16ecafd9fceeec471a0c1bd259fac1618f57675ec4d9f49ae4020be'},
+    {id:'u4', prenom:'Almamy',            nom:'SONKO',    role:'coach',    initials:'AS', color:'g',passwordHash:'f45102d3d1d9b8d58653b78a1fc8945c790abf4edb2afc47afc7061a60fcbc0f'},
+    {id:'u5', prenom:'Bilguissa',         nom:'DIALLO',   role:'coach',    initials:'BD', color:'o',passwordHash:'1318345013c00f80e3f29c9ca67b78257f3d3a3cfa3662b01178489c0ba6c881'},
+    {id:'u6', prenom:'Mouhamed',          nom:'MBALLO',   role:'coach',  initials:'MM', color:'p',passwordHash:'ce8610d1ecf23b5b849c2806165a14459605e41156945bdacedda0600b5e21a6'},
+    {id:'u7', prenom:'Maimouna',          nom:'SANÉ',     role:'coach',      initials:'MS', color:'b',passwordHash:'60b4cd66cd623f8b359992d275470e152a0d7b136cc40148e0708a9371d142a6'},
+    {id:'u8', prenom:'Sadio',            nom:'SOUANÉ',   role:'coach',  initials:'SS', color:'o',passwordHash:'fd73279ff2dc3d531335c45c836e6d8ff3d3c4a7fcc33a05911d0d43beebfe03'},
+    {id:'u9', prenom:'Aina Angélique A.', nom:'DIATTA',   role:'coach',    initials:'AD', color:'g',passwordHash:'8621762cc760f5bd08280d57015b96de69fc4eeb5485c188aba8e91dc5504dd5'},
+    {id:'u10',prenom:'Malamine Alassane', nom:'GOUDIABY', role:'coach', initials:'MG', color:'b',passwordHash:'83b2c5559f7f6540a44b9a9e1c22974eea472d3e57eb4d8ba0ebb8ac9b1eeb5b'},
   ],
   beneficiaires:[
     {id:'bj1',prenom:'Daouda',nom:'TOURE',type:'JE',secteur:'Services',region:'Kolda',zone:'Kolda',coachId:'u5',dateEntree:'2025-10-01',actif:true},
@@ -2288,15 +2293,25 @@ function anneeFromMois(s){return s?s.slice(0,4):'';}
 function moisNum(s){return s?s.slice(5,7):'';}
 
 // ── localStorage DB ──
+// NOTE: Les données sont stockées dans le navigateur (localStorage).
+// Chaque utilisateur possède ses propres données isolées.
+// Utilisez la fonction Export/Import pour synchroniser entre appareils.
 const DB = {
-  KEY:'pafej_v41',
+  KEY:'pafej_v42',
+  _cache:null,
   load(){
-    const d = localStorage.getItem(this.KEY);
-    if(d) return JSON.parse(d);
-    localStorage.setItem(this.KEY, JSON.stringify(DEMO));
-    return JSON.parse(JSON.stringify(DEMO));
+    if(this._cache) return this._cache;
+    try{
+      const d = localStorage.getItem(this.KEY);
+      if(d){ this._cache=JSON.parse(d); return this._cache; }
+    }catch(e){ console.warn('DB: erreur lecture localStorage',e); }
+    // Première utilisation : charger les données DEMO
+    this._cache = JSON.parse(JSON.stringify(DEMO));
+    this._persist();
+    return this._cache;
   },
-  save(data){ localStorage.setItem(this.KEY, JSON.stringify(data)); },
+  _persist(){ try{ localStorage.setItem(this.KEY, JSON.stringify(this._cache)); }catch(e){ console.warn('DB: espace insuffisant',e); } },
+  save(data){ this._cache=data; this._persist(); },
   get data(){ return this.load(); },
   set data(d){ this.save(d); },
   uid(){ return 'x'+ Date.now().toString(36)+Math.random().toString(36).slice(2,6); },
@@ -2331,7 +2346,9 @@ function checkAutoLogin(){
   if(!uid||!token) return;
   const d=DB.data;
   const u=d.users.find(x=>x.id===uid);
-  if(!u||u.password!==atob(token)) return;
+  if(!u) return;
+  // Vérifier le token via hash (token = hash du mot de passe encodé base64)
+  try{ if((_PWD_HASHES[u.id]||u.passwordHash||'')!==atob(token)) return; }catch(e){ return; }
   if(u.blocked){return;}
   // Store personal mode: this user cannot switch to others
   window._personalMode={uid, token};
@@ -2371,19 +2388,27 @@ function syncSplashSelect(uid){
   autoFillPwd(uid);
 }
 
-// Mots de passe intégrés directement pour connexion sans saisie
-const _PWDS={
-  u1:'Ndiogou@Belo754',
-  u2:'Tida@Belo213',
-  u3:'Ndeye@Belo891',
-  u4:'Almamy@Belo347',
-  u5:'Bilguissa@Belo628',
-  u6:'Mouhamed@Belo156',
-  u7:'Maimouna@Belo489',
-  u8:'Sadion@Belo732',
-  u9:'Aina@Belo265',
-  u10:'Malamine@Belo918'
+// ── Hash SHA-256 des mots de passe (jamais en clair dans le code) ──
+// Les vrais hashes sont calculés à partir des mots de passe d'origine.
+// Pour recalculer : hashPassword('monMotDePasse').then(h => console.log(h))
+const _PWD_HASHES={
+  u1:'60e1e8ca0013510bf7ab5f8156b5052d6a8ece838c74d30a16604acfc11866ce',
+  u2:'31e2e82b309358bd79fe798664099321c1e9f29a22c3f2028934a075128ed7cf',
+  u3:'968a69abf16ecafd9fceeec471a0c1bd259fac1618f57675ec4d9f49ae4020be',
+  u4:'f45102d3d1d9b8d58653b78a1fc8945c790abf4edb2afc47afc7061a60fcbc0f',
+  u5:'1318345013c00f80e3f29c9ca67b78257f3d3a3cfa3662b01178489c0ba6c881',
+  u6:'ce8610d1ecf23b5b849c2806165a14459605e41156945bdacedda0600b5e21a6',
+  u7:'60b4cd66cd623f8b359992d275470e152a0d7b136cc40148e0708a9371d142a6',
+  u8:'fd73279ff2dc3d531335c45c836e6d8ff3d3c4a7fcc33a05911d0d43beebfe03',
+  u9:'8621762cc760f5bd08280d57015b96de69fc4eeb5485c188aba8e91dc5504dd5',
+  u10:'83b2c5559f7f6540a44b9a9e1c22974eea472d3e57eb4d8ba0ebb8ac9b1eeb5b'
 };
+
+async function hashPassword(pwd){
+  const enc=new TextEncoder();
+  const buf=await crypto.subtle.digest('SHA-256',enc.encode(pwd));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
 
 function autoFillPwd(uid){
   const wrap=document.getElementById('pwdFieldWrap');
@@ -2402,32 +2427,33 @@ function doLogin(){
   const pwd = document.getElementById('loginPwd')?.value||'';
   const err = document.getElementById('loginErr');
   const u = DB.data.users.find(x=>x.id===uid);
-  const validPwd=_PWDS[uid]||u?.password||'';
   if(!uid){err.textContent='Veuillez sélectionner un utilisateur.';err.style.display='block';return;}
   if(!pwd){err.textContent='Veuillez saisir votre mot de passe.';err.style.display='block';return;}
-  if(!u||pwd!==validPwd){ err.textContent='Identifiant ou mot de passe incorrect.';err.style.display='block'; return; }
+  if(!u){ err.textContent='Identifiant ou mot de passe incorrect.';err.style.display='block'; return; }
   if(u.blocked){ err.textContent='Votre compte a été suspendu. Contactez l\'administrateur.'; err.style.display='block'; return; }
-  // Block switching to other users in personal mode
   if(window._personalMode&&u.id!==window._personalMode.uid){ err.textContent='Accès non autorisé.'; err.style.display='block'; return; }
-  u.lastLogin=new Date().toISOString(); const dd=DB.data; const uu=dd.users.find(x=>x.id===u.id); if(uu)uu.lastLogin=u.lastLogin; DB.data=dd;
-  err.style.display='none';
-  CU = u;
-  document.getElementById('loginScreen').style.display='none';
-  document.getElementById('splashScreen').style.display='none';
-  document.getElementById('app').classList.add('on');
-  // Set sidebar user info
-  const colors = {g:'var(--g2)',b:'var(--blue)',p:'var(--purple)',o:'var(--gold)'};
-  document.getElementById('sbAv').textContent = u.initials;
-  document.getElementById('sbAv').style.background = colors[u.color]||'var(--g2)';
-  document.getElementById('sbName').textContent = u.prenom+' '+u.nom;
-  document.getElementById('sbRole').textContent = u.role==='admin'?'Administrateur':'Business Coach';
-  document.getElementById('topRole').textContent = u.role==='admin'?'Administrateur':'Business Coach';
-  // Hide admin-only nav if coach
-  initFilters();
-  applyRoleUI();
-  syncSuiviMoisOpts();
-  syncImfMoisOpts();
-  goPage('dash');
+  // Vérification par hash SHA-256
+  hashPassword(pwd).then(function(hash){
+    const storedHash = _PWD_HASHES[uid] || u.passwordHash || '';
+    if(hash !== storedHash){ err.textContent='Identifiant ou mot de passe incorrect.'; err.style.display='block'; return; }
+    u.lastLogin=new Date().toISOString(); const dd=DB.data; const uu=dd.users.find(x=>x.id===u.id); if(uu)uu.lastLogin=u.lastLogin; DB.data=dd;
+    err.style.display='none';
+    CU = u;
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('splashScreen').style.display='none';
+    document.getElementById('app').classList.add('on');
+    const colors = {g:'var(--g2)',b:'var(--blue)',p:'var(--purple)',o:'var(--gold)'};
+    document.getElementById('sbAv').textContent = u.initials;
+    document.getElementById('sbAv').style.background = colors[u.color]||'var(--g2)';
+    document.getElementById('sbName').textContent = u.prenom+' '+u.nom;
+    document.getElementById('sbRole').textContent = u.role==='admin'?'Administrateur':'Business Coach';
+    document.getElementById('topRole').textContent = u.role==='admin'?'Administrateur':'Business Coach';
+    initFilters();
+    applyRoleUI();
+    syncSuiviMoisOpts();
+    syncImfMoisOpts();
+    goPage('dash');
+  });
 }
 function doLogout(){
   CU=null;
@@ -2625,7 +2651,7 @@ const typeBadge={JE:'bdg-g',FE:'bdg-purple',GF:'bdg-gold'};
 function genererLienAcces(uid){
   const d=DB.data;
   const u=d.users.find(x=>x.id===uid); if(!u)return;
-  const token=btoa(u.password);
+  const token=btoa(_PWD_HASHES[u.id]||u.passwordHash||'');
   const baseUrl=window.location.href.split('#')[0];
   const link=`${baseUrl}#u=${uid}&t=${token}`;
   const name=u.prenom+' '+u.nom;
@@ -2646,12 +2672,12 @@ function genererLienAcces(uid){
       <div style="background:var(--bg);border-radius:8px;padding:10px 14px;font-size:12px">
         <div style="font-weight:600;color:var(--t1);margin-bottom:4px">Identifiants manuels</div>
         <div class="import-row"><span>Utilisateur</span><span style="font-weight:600">${name}</span></div>
-        <div class="import-row"><span>Mot de passe</span><span style="font-weight:600;color:var(--g)">${u.password}</span></div>
+        <div class="import-row"><span>Mot de passe</span><span style="font-weight:600;color:var(--t3)">[protégé]</span></div>
       </div>
     </div>
   `,`<button class="btn btns" onclick="closeModal()">Fermer</button>
      <button class="btn btnp" onclick="copierLien('${link}')">📋 Copier le lien</button>
-     <button class="btn" style="background:var(--blue);color:#fff;border:none" onclick="partagerWhatsApp('${name}','${link}','${u.password}')">💬 WhatsApp</button>`);
+     <button class="btn" style="background:var(--blue);color:#fff;border:none" onclick="partagerWhatsApp('${name}','${link}')">💬 WhatsApp</button>`);
 }
 
 function copierLien(link){
@@ -2667,8 +2693,8 @@ function copierLien(link){
   });
 }
 
-function partagerWhatsApp(name,link,pwd){
-  const msg=`Bonjour ${name.split(' ')[0]} 👋\n\nVoici votre accès à l'application Nucleus – Cabinet BELO :\n\n🔗 Lien direct : ${link}\n\n📱 Ou ouvrez l'application et connectez-vous avec :\n• Utilisateur : ${name}\n• Mot de passe : ${pwd}\n\nBonne utilisation !`;
+function partagerWhatsApp(name,link){
+  const msg=`Bonjour ${name.split(' ')[0]} 👋\n\nVoici votre accès à l'application Nucleus – Cabinet BELO :\n\n🔗 Lien direct : ${link}\n\n📱 Ou ouvrez l'application et connectez-vous avec votre identifiant habituel.\n\nBonne utilisation !`;
   window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
 }
 
@@ -2676,6 +2702,14 @@ function partagerWhatsApp(name,link,pwd){
 //  EXPORT / IMPORT SYNC
 // ══════════════════════════════════════════════════════
 function renderSyncPage(){
+  // Afficher la taille de stockage utilisée
+  try{
+    const used=JSON.stringify(localStorage).length;
+    const kb=(used/1024).toFixed(1);
+    const pct=Math.min(100,Math.round(used/(5*1024*1024)*100));
+    const storInfo=document.getElementById('storageInfo');
+    if(storInfo) storInfo.innerHTML=`💾 Stockage local utilisé : <strong>${kb} Ko</strong> sur ~5 Mo (${pct}%) — Les données sont <strong>propres à ce navigateur</strong>. Exportez régulièrement pour ne rien perdre.`;
+  }catch(e){}
   if(CU.role==='admin'){
     document.getElementById('syncCoachView').style.display='none';
     document.getElementById('syncAdminView').style.display='';
@@ -3103,15 +3137,24 @@ function bloquerUser(uid){
      <button class="btn btnd" onclick="confirmBloquer('${uid}')">🔒 Bloquer</button>`);
 }
 
+// ── Vérification mot de passe admin via hash ──
+async function checkAdminPassword(pwd){
+  const h = await hashPassword(pwd);
+  const stored = _PWD_HASHES[CU.id] || CU.passwordHash || '';
+  return h === stored;
+}
+
 function confirmBloquer(uid){
   const pwd=document.getElementById('blockPwd')?.value||'';
   const err=document.getElementById('blockErr');
-  if(pwd!==CU.password){if(err)err.style.display='block';return;}
-  const d=DB.data;
-  const u=d.users.find(x=>x.id===uid); if(!u)return;
-  u.blocked=true;
-  DB.data=d; closeModal(); renderAdminUsers();
-  toast('Utilisateur bloqué');
+  checkAdminPassword(pwd).then(function(ok){
+    if(!ok){if(err)err.style.display='block';return;}
+    const d=DB.data;
+    const u=d.users.find(x=>x.id===uid); if(!u)return;
+    u.blocked=true;
+    DB.data=d; closeModal(); renderAdminUsers();
+    toast('Utilisateur bloqué');
+  });
 }
 
 function debloquerUser(uid){
@@ -3148,12 +3191,18 @@ function confirmerChangePwd(uid){
   const err=document.getElementById('pwdChangeErr');
   if(!p1||p1.length<6){err.style.display='block';err.textContent='Le mot de passe doit contenir au moins 6 caractères';return;}
   if(p1!==p2){err.style.display='block';err.textContent='Les deux mots de passe ne correspondent pas';return;}
-  if(admin!==CU.password){err.style.display='block';err.textContent='❌ Mot de passe administrateur incorrect';return;}
-  const d=DB.data;
-  const u=d.users.find(x=>x.id===uid); if(!u)return;
-  u.password=p1;
-  DB.data=d; closeModal(); renderAdminUsers();
-  toast('Mot de passe mis à jour ✓');
+  checkAdminPassword(admin).then(function(ok){
+    if(!ok){err.style.display='block';err.textContent='❌ Mot de passe administrateur incorrect';return;}
+    hashPassword(p1).then(function(newHash){
+      const d=DB.data;
+      const u=d.users.find(x=>x.id===uid); if(!u)return;
+      u.passwordHash=newHash;
+      delete u.password;
+      _PWD_HASHES[uid]=newHash;
+      DB.data=d; closeModal(); renderAdminUsers();
+      toast('Mot de passe mis à jour ✓');
+    });
+  });
 }
 
 function reinitialiserCompte(uid){
@@ -3180,13 +3229,20 @@ function confirmerReinit(uid){
   const newPwd=document.getElementById('resetPwd')?.value.trim();
   const admin=document.getElementById('resetAdminPwd')?.value;
   const err=document.getElementById('resetErr');
-  if(admin!==CU.password){err.style.display='block';return;}
-  const d=DB.data;
-  const u=d.users.find(x=>x.id===uid); if(!u)return;
-  u.password=newPwd;
-  u.blocked=false;
-  DB.data=d; closeModal(); renderAdminUsers();
-  toast(`Compte réinitialisé · Nouveau mot de passe : ${newPwd}`);
+  if(!newPwd){err.style.display='block';err.textContent='Veuillez saisir un nouveau mot de passe';return;}
+  checkAdminPassword(admin).then(function(ok){
+    if(!ok){err.style.display='block';err.textContent='❌ Mot de passe administrateur incorrect';return;}
+    hashPassword(newPwd).then(function(newHash){
+      const d=DB.data;
+      const u=d.users.find(x=>x.id===uid); if(!u)return;
+      u.passwordHash=newHash;
+      delete u.password;
+      _PWD_HASHES[uid]=newHash;
+      u.blocked=false;
+      DB.data=d; closeModal(); renderAdminUsers();
+      toast('Compte réinitialisé ✓ – Communiquez le nouveau mot de passe à l\'utilisateur');
+    });
+  });
 }
 
 // ══════════════════════════════════════════════════════
@@ -3250,46 +3306,48 @@ function confirmerTransfert(bid){
     toast('Veuillez sélectionner un coach destinataire');
     return;
   }
-  if(pwd!==CU.password){
-    if(err) err.style.display='block';
-    const inp=document.getElementById('transferPwd');
-    if(inp){inp.style.borderColor='var(--red)';inp.focus();}
-    return;
-  }
+  checkAdminPassword(pwd).then(function(ok){
+    if(!ok){
+      if(err) err.style.display='block';
+      const inp=document.getElementById('transferPwd');
+      if(inp){inp.style.borderColor='var(--red)';inp.focus();}
+      return;
+    }
 
-  const d=DB.data;
-  const b=d.beneficiaires.find(x=>x.id===bid); if(!b)return;
+    const d=DB.data;
+    const b=d.beneficiaires.find(x=>x.id===bid); if(!b)return;
 
-  const fromCoach=DB.userName(b.coachId);
-  const toCoach=DB.userName(targetCoachId);
-  const name=b.nom?b.prenom+' '+b.nom:b.prenom;
-  const oldType=b.type;
+    const fromCoach=DB.userName(b.coachId);
+    const toCoach=DB.userName(targetCoachId);
+    const name=b.nom?b.prenom+' '+b.nom:b.prenom;
+    const oldType=b.type;
 
-  // Update beneficiary
-  b.coachId=targetCoachId;
-  if(newType) b.type=newType;
+    // Update beneficiary
+    b.coachId=targetCoachId;
+    if(newType) b.type=newType;
 
-  // Log transfer in history
-  if(!d.transferts) d.transferts=[];
-  d.transferts.push({
-    id:DB.uid(),
-    beneficiaireId:bid,
-    nomBenef:name,
-    fromCoachId:CU.id,
-    fromCoachName:CU.prenom+' '+CU.nom,
-    toCoachId:targetCoachId,
-    toCoachName:toCoach,
-    oldType,newType:b.type,
-    motif,
-    date:new Date().toISOString().slice(0,10),
-    dateHeure:new Date().toISOString()
+    // Log transfer in history
+    if(!d.transferts) d.transferts=[];
+    d.transferts.push({
+      id:DB.uid(),
+      beneficiaireId:bid,
+      nomBenef:name,
+      fromCoachId:CU.id,
+      fromCoachName:CU.prenom+' '+CU.nom,
+      toCoachId:targetCoachId,
+      toCoachName:toCoach,
+      oldType,newType:b.type,
+      motif,
+      date:new Date().toISOString().slice(0,10),
+      dateHeure:new Date().toISOString()
+    });
+
+    DB.data=d;
+    closeModal();
+    renderBenefTable();
+    initFilters();
+    toast(`✅ ${name} transféré(e) vers ${toCoach}`);
   });
-
-  DB.data=d;
-  closeModal();
-  renderBenefTable();
-  initFilters();
-  toast(`✅ ${name} transféré(e) vers ${toCoach}`);
 }
 
 
@@ -3354,21 +3412,23 @@ function deleteBenef(id){
 function confirmDeleteBenef(id){
   const pwd=document.getElementById('deletePwd')?.value||'';
   const err=document.getElementById('deletePwdErr');
-  if(pwd!==CU.password){
-    if(err) err.style.display='block';
-    const inp=document.getElementById('deletePwd');
-    if(inp){inp.style.borderColor='var(--red)';inp.focus();}
-    return;
-  }
-  const d=DB.data;
-  d.beneficiaires=d.beneficiaires.filter(b=>b.id!==id);
-  d.diagnostics=d.diagnostics.filter(x=>x.beneficiaireId!==id);
-  d.suivis=d.suivis.filter(x=>x.beneficiaireId!==id);
-  d.imfDossiers=d.imfDossiers.filter(x=>x.beneficiaireId!==id);
-  DB.data=d;
-  closeModal();
-  renderBenefTable();
-  toast('Bénéficiaire supprimé');
+  checkAdminPassword(pwd).then(function(ok){
+    if(!ok){
+      if(err) err.style.display='block';
+      const inp=document.getElementById('deletePwd');
+      if(inp){inp.style.borderColor='var(--red)';inp.focus();}
+      return;
+    }
+    const d=DB.data;
+    d.beneficiaires=d.beneficiaires.filter(b=>b.id!==id);
+    d.diagnostics=d.diagnostics.filter(x=>x.beneficiaireId!==id);
+    d.suivis=d.suivis.filter(x=>x.beneficiaireId!==id);
+    d.imfDossiers=d.imfDossiers.filter(x=>x.beneficiaireId!==id);
+    DB.data=d;
+    closeModal();
+    renderBenefTable();
+    toast('Bénéficiaire supprimé');
+  });
 }
 
 // ══════════════════════════════════════════════════════
